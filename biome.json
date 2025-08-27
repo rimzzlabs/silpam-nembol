@@ -18,8 +18,12 @@
     "enabled": true,
     "rules": {
       "recommended": true,
+      "style": {
+        "useConst": "off"
+      },
       "suspicious": {
-        "noUnknownAtRules": "off"
+        "noUnknownAtRules": "off",
+        "noExplicitAny": "info"
       }
     },
     "domains": {
@@ -28,10 +32,6 @@
     }
   },
   "assist": {
-    "actions": {
-      "source": {
-        "organizeImports": "on"
-      }
-    }
+    "enabled": false
   }
 }
