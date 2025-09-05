@@ -1,36 +1,40 @@
 import { ButtonLink } from "@/components/ui/button";
-import Image from "next/image";
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { ClipboardPlus } from "lucide-react";
 
 export default function Home() {
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li>
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-          <li>App already installed with Shadcn UI.</li>
-          <li>
-            Visit dashboard{" "}
-            <ButtonLink href="/dashboard" size="sm" variant="link">
-              visit &rarr;
-            </ButtonLink>
-          </li>
-        </ol>
-      </main>
-    </div>
+    <section className="h-screen grid place-items-center">
+      <header className="w-11/12 max-w-md mx-auto text-center">
+        <h1 className="text-3xl font-bold xl:text-4xl">SILPAM Desa Nembol</h1>
+        <p>Sistem Informasi Layanan Pengaduan Desa Nembol</p>
+
+        <div className="flex items-center gap-2 text-start pt-6 pb-6">
+          <Card className="w-full">
+            <CardHeader>
+              <CardTitle className="text-xl">76</CardTitle>
+              <CardDescription>Pengaduan Dibuat</CardDescription>
+            </CardHeader>
+          </Card>
+
+          <Card className="w-full">
+            <CardHeader>
+              <CardTitle className="text-xl">98</CardTitle>
+              <CardDescription>Pengaduan Terselesaikan</CardDescription>
+            </CardHeader>
+          </Card>
+        </div>
+
+        <ButtonLink href="/report">
+          <ClipboardPlus className="size-4" />
+          Buat Pengaduan
+        </ButtonLink>
+      </header>
+    </section>
   );
 }

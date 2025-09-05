@@ -17,6 +17,7 @@ import {
 import { ChevronRightIcon } from "lucide-react";
 import { useToggle } from "@/hooks/use-toggle";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
 
 export function DashboardSidebarMenuItem(props: DashboardNavigation) {
   let [open, onToggle] = useToggle();
@@ -24,7 +25,9 @@ export function DashboardSidebarMenuItem(props: DashboardNavigation) {
 
   let onToggleChange = (open: boolean) => onToggle(open);
 
-  let isPathnameActive = (p: string) => pathname.includes(p);
+  let isPathnameActive = (p: string) => {
+    return pathname.includes(p) && pathname.endsWith(p);
+  };
 
   if (!props.subItems) {
     return (
@@ -37,9 +40,9 @@ export function DashboardSidebarMenuItem(props: DashboardNavigation) {
               "bg-sidebar-accent text-sidebar-accent-foreground",
           )}
         >
-          <a href={props.pathname} rel="noopener">
+          <Link href={props.pathname} rel="noopener">
             <props.icon className="size-4" /> {props.label}
-          </a>
+          </Link>
         </SidebarMenuButton>
       </SidebarMenuItem>
     );
@@ -67,9 +70,9 @@ export function DashboardSidebarMenuItem(props: DashboardNavigation) {
             {props.subItems.map((item) => (
               <SidebarMenuSubItem key={item.label}>
                 <SidebarMenuSubButton asChild>
-                  <a href={item.pathname} rel="noopener">
+                  <Link href={item.pathname} rel="noopener">
                     <item.icon className="size-4" /> {item.label}
-                  </a>
+                  </Link>
                 </SidebarMenuSubButton>
               </SidebarMenuSubItem>
             ))}

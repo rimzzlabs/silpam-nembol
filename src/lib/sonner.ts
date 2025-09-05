@@ -25,14 +25,14 @@ export function withSonnerPromise<A extends Array<any>, R>(
   options?: WithSonnerPromiseOptions,
 ) {
   let texts = {
-    loading: options?.loading ?? "Processing Request",
-    success: options?.success ?? "Request Has Completed",
-    error: options?.error ?? "Something went wrong",
+    loading: options?.loading ?? "Memproses permintaan",
+    success: options?.success ?? "Permintaan berhasil",
+    error: options?.error ?? "Permintaan gagal, harap coba lagi nanti",
   };
 
   return async (...args: A) => {
     toast.dismiss();
-    await toast
+    return await toast
       .promise(fn(...args) as Promise<R>, {
         ...texts,
         finally: options?.onSettled,

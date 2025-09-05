@@ -1,4 +1,4 @@
-import { A, O, pipe, S } from "@mobily/ts-belt";
+import { A, F, O, pipe, S } from "@mobily/ts-belt";
 
 export function numericStringOnly(str?: string | null) {
   return pipe(
@@ -30,15 +30,6 @@ export function censorEmail(email: string) {
   );
 }
 
-export function toTitle(text: string) {
-  return pipe(
-    text,
-    S.split(" "),
-    A.map((txt) => txt.slice(0, 1).toUpperCase() + txt.slice(1).toLowerCase()),
-    A.join(" "),
-  );
-}
-
 /**
  *
  * @param maxLength default to 2
@@ -56,52 +47,19 @@ export function toInitial(maxLength = 2) {
   };
 }
 
-export function generatePassword(length = 8) {
-  let uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  let lowercase = "abcdefghijklmnopqrstuvwxyz";
-  let numeric = "1234567890";
-  let specialChars = `!@#$%^&*()_+-=[]{}|;\\:,./<>?${"`"}~`;
-
-  let chars = pipe(
-    uppercase,
-    S.append(lowercase),
-    S.append(numeric),
-    S.append(specialChars),
-  );
-
-  if (length < 4) {
-    return pipe(
-      0,
-      A.range(length),
-      A.map(() => chars[Math.floor(Math.random() * chars.length)]),
-      A.join(""),
-    );
-  }
-
-  let getRandomChars = (chars: string) => {
-    return pipe(
-      chars,
-      S.get(Math.floor(Math.random() * chars.length)),
-      O.getWithDefault(chars[0]),
-    );
-  };
-
-  let passwordArray = [
-    getRandomChars(uppercase),
-    getRandomChars(lowercase),
-    getRandomChars(numeric),
-    getRandomChars(specialChars),
-  ];
-
-  return pipe(
-    0,
-    A.range(length - 4),
-    A.map(() => getRandomChars(chars)),
-    A.concat(passwordArray),
-    A.join(""),
-  );
-}
-
 export function searchablText(text: string) {
   return pipe(text, S.toLowerCase, S.replaceByRe(/\s+/g, " "));
+}
+
+export function trimParagraph(text?: string | null, max = 100) {
+  return pipe(
+    text,
+    O.fromNullable,
+    O.mapWithDefault("", F.identity),
+    F.ifElse(
+      (txt) => txt.length > max,
+      (txt) => pipe(txt, S.slice(0, max), S.append("...")),
+      F.identity,
+    ),
+  );
 }

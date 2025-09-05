@@ -8,7 +8,11 @@
     "start": "next start",
     "lint": "biome check",
     "format": "biome format --write",
-    "ui:add": "pnpm dlx shadcn add"
+    "ui:add": "pnpm dlx shadcn add",
+    "supabase:login": "pnpm dlx supabase login",
+    "supabase:init": "pnpm dlx supabase init",
+    "supabase:link": "pnpm dlx supabase link --project-ref ikjynmroxguquecextiy",
+    "supabase:generate": "pnpm dlx supabase gen types --project-id ikjynmroxguquecextiy --schema public > ./src/modules/supabase/types.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.1",
@@ -30,6 +34,8 @@
     "@radix-ui/react-switch": "^1.2.6",
     "@radix-ui/react-tabs": "^1.1.13",
     "@radix-ui/react-tooltip": "^1.2.8",
+    "@supabase/ssr": "^0.7.0",
+    "@supabase/supabase-js": "^2.57.0",
     "@tanstack/react-query": "^5.85.5",
     "@tanstack/react-table": "^8.21.3",
     "class-variance-authority": "^0.7.1",
@@ -40,14 +46,18 @@
     "input-otp": "^1.4.2",
     "lucide-react": "^0.542.0",
     "next": "15.5.2",
+    "next-nprogress-bar": "^2.4.7",
     "next-themes": "^0.4.6",
+    "radash": "^12.1.1",
     "react": "19.1.0",
     "react-day-picker": "^9.9.0",
     "react-dom": "19.1.0",
+    "react-dropzone": "^14.3.8",
     "react-hook-form": "^7.62.0",
     "recharts": "2.15.4",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.3.1",
+    "ts-pattern": "^5.8.0",
     "zod": "^4.1.3"
   },
   "devDependencies": {
@@ -56,6 +66,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "supabase": "^2.39.2",
     "tailwindcss": "^4",
     "tw-animate-css": "^1.3.7",
     "typescript": "^5"
