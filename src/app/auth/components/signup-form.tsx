@@ -12,21 +12,40 @@ import { type SignUpSchema, signUpSchema } from "@/modules/auth/zod-schema";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { withSonnerPromise } from "@/lib/sonner";
-import { random, sleep } from "radash";
 import { Input, InputPassword } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { signupAction } from "@/modules/auth/actions/signup";
+import { useTransition } from "react";
+import { useRouter } from "next/navigation";
 
 export function SignUpForm() {
+  let router = useRouter();
+  let [isPending, startTransition] = useTransition();
+
   let form = useForm<SignUpSchema>({
     defaultValues: { email: "", password: "", address: "", name: "" },
     resolver: zodResolver(signUpSchema),
   });
 
   let onSubmit = form.handleSubmit(
-    withSonnerPromise(async (values) => {
-      await sleep(random(900, 1000));
-    }),
+    withSonnerPromise(
+      async (values) => {
+        let res = await signupAction(values);
+        if (res.error) throw new Error(res.message);
+
+        form.reset();
+        startTransition(() => {
+          router.replace("/auth/signin");
+        });
+      },
+      {
+        loading: "Mendaftarkan akun baru anda...",
+        success:
+          "Akun berhasil didaftarkan, silakan cek email dan verifikasi akun anda",
+        error: "Gagal mendaftarkan akun",
+      },
+    ),
   );
 
   return (
@@ -92,7 +111,9 @@ export function SignUpForm() {
           )}
         />
 
-        <Button>Daftar</Button>
+        <Button disabled={isPending || form.formState.isSubmitting}>
+          Daftar
+        </Button>
       </form>
     </Form>
   );

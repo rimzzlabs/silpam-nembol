@@ -59,11 +59,7 @@ export default async function Admin(props: TPageProps) {
   return (
     <section className="grid gap-5">
       <h1 className="text-2xl font-bold">Dashboard </h1>
-      <ComplaintCards
-        {...counters}
-        userId={userQuery.data.user.id}
-        total={complaintsQuery.count ?? 0}
-      />
+      <ComplaintCards {...counters} total={complaintsQuery.count ?? 0} />
 
       <DashboardComplaintList
         title="Aduan terbaru"

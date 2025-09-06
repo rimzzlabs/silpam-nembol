@@ -72,7 +72,7 @@ export type Database = {
         Insert: {
           alamat: string
           created_at?: string
-          id?: string
+          id: string
           nama: string
           updated_at?: string
         }

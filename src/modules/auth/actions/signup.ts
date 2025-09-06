@@ -3,9 +3,7 @@
 import { createClient } from "@/modules/supabase/server";
 import type { SignUpSchema } from "../zod-schema";
 import { failedAction, successAction } from "@/lib/action";
-import { revalidatePath } from "next/cache";
-
-export async function signup(payload: SignUpSchema) {
+export async function signupAction(payload: SignUpSchema) {
   let supabase = await createClient();
 
   let signUpQuery = await supabase.auth.signUp({
@@ -13,21 +11,26 @@ export async function signup(payload: SignUpSchema) {
     password: payload.password,
   });
 
-  if (signUpQuery.error) return failedAction("Gagal membuat akun");
+  if (signUpQuery.error) {
+    console.info("signup error: ", signUpQuery.error);
+    return failedAction("User dengan email ini sudah terdaftar");
+  }
 
-  let profileQuery = await supabase
-    .from("profiles")
-    .insert({ nama: payload.name, alamat: payload.address });
+  if (!signUpQuery.data.user) {
+    console.info("signup user error: ", signUpQuery.error);
+    return failedAction("Gagal membuat akun");
+  }
 
-  if (profileQuery.error) return failedAction("Gagal membuat akun");
-
-  let signInQurey = await supabase.auth.signInWithPassword({
-    email: payload.email,
-    password: payload.password,
+  let profileQuery = await supabase.from("profiles").insert({
+    nama: payload.name,
+    alamat: payload.address,
+    id: signUpQuery.data.user.id,
   });
 
-  if (signInQurey.error) return failedAction("Gagal membuat akun");
+  if (profileQuery.error) {
+    console.info("profile error: ", profileQuery.error);
+    return failedAction(profileQuery.error.message);
+  }
 
-  revalidatePath("/", "layout");
   return successAction({ message: "Berhasil membuat akun" });
 }

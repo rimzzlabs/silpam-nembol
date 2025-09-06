@@ -7,6 +7,7 @@ import { ThemeProvider } from "next-themes";
 import type { PropsWithChildren } from "react";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { getQueryClient } from "@/lib/query-client";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 export function Providers(props: PropsWithChildren) {
   let client = getQueryClient();
@@ -28,6 +29,8 @@ export function Providers(props: PropsWithChildren) {
           shallowRouting
           options={{ showSpinner: false }}
         />
+
+        <ReactQueryDevtools />
 
         <Toaster />
       </ThemeProvider>
