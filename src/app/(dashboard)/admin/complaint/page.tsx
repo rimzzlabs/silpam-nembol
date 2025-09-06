@@ -25,6 +25,7 @@ export default async function Complaint(props: TPageProps) {
       <ComplaintList
         prefixDetailPathname="/admin"
         initialData={{ limit, page, result, total }}
+        emptyMessage="Belum ada laporan warga, jika ada laporan warga, daftar laporan akan muncul disini"
       />
     </section>
   );
