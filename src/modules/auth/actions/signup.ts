@@ -3,12 +3,20 @@
 import { createClient } from "@/modules/supabase/server";
 import type { SignUpSchema } from "../zod-schema";
 import { failedAction, successAction } from "@/lib/action";
+
+let siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+
 export async function signupAction(payload: SignUpSchema) {
+  if (!siteUrl) throw new Error("Missing siteURL");
+
   let supabase = await createClient();
 
   let signUpQuery = await supabase.auth.signUp({
     email: payload.email,
     password: payload.password,
+    options: {
+      emailRedirectTo: `${siteUrl}/auth/callback`,
+    },
   });
 
   if (signUpQuery.error) {
