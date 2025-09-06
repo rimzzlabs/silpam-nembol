@@ -5,7 +5,7 @@ import { useSession } from "../auth/hooks";
 export function useProfile() {
   let supabase = createClient();
   let session = useSession();
-  let sessionUserId = session.data?.id;
+  let sessionUserId = session.data?.user.id;
 
   return useQuery({
     enabled: Boolean(sessionUserId),
