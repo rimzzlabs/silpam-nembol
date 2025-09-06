@@ -7,9 +7,10 @@ export default function Home() {
   return (
     <section className="pt-40">
       <header className="w-11/12 max-w-2xl mx-auto text-center">
-        <Card>
-          <CardContent>
+        <Card className="py-3">
+          <CardContent className="px-3">
             <Image
+              priority
               src="/preview.png"
               alt="preview aduan"
               width={1280}

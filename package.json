@@ -1,5 +1,5 @@
 {
-  "name": "next-ts",
+  "name": "@rimzzlabs/silpam-nembol",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -72,5 +72,10 @@
     "tailwindcss": "^4",
     "tw-animate-css": "^1.3.7",
     "typescript": "^5"
+  },
+  "author": {
+    "name": "Rizki Citra, rimzzlabs",
+    "email": "rimzzlabs@proton.me",
+    "url": "https://rimzzlabs.com"
   }
 }
