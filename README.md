@@ -48,7 +48,7 @@ SILPAM (Sistem Informasi Layanan Pengaduan) is a comprehensive complaint managem
 
 1. Clone the repository:
    ```bash
-   git clone <repository-url>
+   git clone git@github.com:rimzzlabs/silpam-nembol.git
    cd silpam-nembol
    ```
 
@@ -67,8 +67,8 @@ SILPAM (Sistem Informasi Layanan Pengaduan) is a comprehensive complaint managem
    ```bash
    pnpm supabase:login
    pnpm supabase:init
-   pnpm supabase:link --project-ref ikjynmroxguquecextiy
-   pnpm supabase:generate
+   pnpm supabase:link [your project id]
+   pnpm supabase:generate [your project id]
    ```
 
 ## Usage
@@ -121,7 +121,7 @@ src/
 
 The application uses Supabase with the following main tables:
 - `pengaduan` (complaints): Stores complaint data with user references
-- `replies` (replies): Stores admin responses and status updates
+- `tanggapan` (replies): Stores admin responses and status updates
 - User authentication handled by Supabase Auth
 
 ## Contributing

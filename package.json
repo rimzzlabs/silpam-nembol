@@ -11,8 +11,8 @@
     "ui:add": "pnpm dlx shadcn add",
     "supabase:login": "pnpm dlx supabase login",
     "supabase:init": "pnpm dlx supabase init",
-    "supabase:link": "pnpm dlx supabase link --project-ref ikjynmroxguquecextiy",
-    "supabase:generate": "pnpm dlx supabase gen types --project-id ikjynmroxguquecextiy --schema public > ./src/modules/supabase/types.ts"
+    "supabase:link": "pnpm dlx supabase link --project-ref",
+    "supabase:generate": "pnpm dlx supabase gen types --schema public > ./src/modules/supabase/types.ts --project-id"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.1",
