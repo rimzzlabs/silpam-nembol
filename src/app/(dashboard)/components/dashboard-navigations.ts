@@ -1,6 +1,5 @@
 import { A, F, pipe } from "@mobily/ts-belt";
 import {
-  FileIcon,
   FilePlusIcon,
   LayoutDashboard,
   Megaphone,
@@ -25,12 +24,6 @@ export const DASHBOARD_NAVIGATIONS = [
     role: "admin",
     label: "Daftar aduan",
     pathname: "/admin/complaint",
-  },
-  {
-    label: "Laporan",
-    icon: FileIcon,
-    role: "admin",
-    pathname: "/admin/report",
   },
   {
     icon: Megaphone,

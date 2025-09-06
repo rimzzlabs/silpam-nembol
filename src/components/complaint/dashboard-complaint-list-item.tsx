@@ -20,10 +20,10 @@ export function DashboardComplaintListItem(
 
   return (
     <div className="border-b last-of-type:border-b-0 py-3 flex flex-col lg:flex-row gap-4">
-      <div>
+      <div className="w-full max-w-3xl">
         <h3 className="font-semibold pb-1">{props.judul}</h3>
 
-        <p className="text-sm font-medium text-muted-foreground pb-2 max-w-xl text-balance">
+        <p className="text-sm font-medium text-muted-foreground pb-2 text-balance">
           {trimParagraph(props.konten, 160)}
         </p>
       </div>
