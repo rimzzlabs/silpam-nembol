@@ -27,10 +27,10 @@ export default async function DetailsPage(props: TPageProps) {
     <Fragment>
       <section className="grid xl:grid-cols-5 gap-5 pb-6">
         <div className="xl:col-span-3">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <ComplaintBackButton pathname="/admin/complaint" />
 
-            <div className="inline-flex items-center gap-2">
+            <div className="flex items-center gap-2 max-lg:[&>button]:flex-1">
               <RejectComplaintButton
                 complaintId={complaint.id}
                 status={complaint.status}

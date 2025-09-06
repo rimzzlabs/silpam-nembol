@@ -13,7 +13,7 @@ export function ComplaintContent(
     <article>
       <h1 className="text-2xl font-bold pt-2 pb-4">{props.judul}</h1>
 
-      <div className="inline-flex items-center gap-5">
+      <div className="inline-flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-5 pb-8">
         <div className="inline-flex items-center gap-2">
           <CalendarIcon className="size-4 stroke-muted-foreground" />
           <span className="text-sm font-medium text-muted-foreground">

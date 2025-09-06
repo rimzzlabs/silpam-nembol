@@ -1,6 +1,6 @@
 import type { Tables } from "@/modules/supabase/types";
 import { trimParagraph } from "@/lib/string";
-import { Calendar, EyeIcon, MapPin } from "lucide-react";
+import { Calendar, EyeIcon, MapPin, User2 } from "lucide-react";
 import { pipe } from "@mobily/ts-belt";
 import { formatDate } from "@/lib/date";
 import {
@@ -17,9 +17,13 @@ import { Badge, type BadgeVariants } from "../ui/badge";
 import { match } from "ts-pattern";
 import { title } from "radash";
 
-type ComplaintListItemProps = Tables<"pengaduan"> & {
-  prefixDetailPathname: `/user` | `/admin`;
-};
+type ComplaintListItemProps = Prettify<
+  Tables<"pengaduan"> & {
+    profiles?: Pick<Tables<"profiles">, "id" | "nama" | "alamat">;
+  } & {
+    prefixDetailPathname: `/user` | `/admin`;
+  }
+>;
 
 export function ComplaintListItem(props: ComplaintListItemProps) {
   let variant = match<string, BadgeVariants>(props.status)
@@ -37,6 +41,13 @@ export function ComplaintListItem(props: ComplaintListItemProps) {
         <Badge variant={variant}>{title(props.status)}</Badge>
 
         <div className="flex flex-col gap-1 w-full pt-2">
+          {props.prefixDetailPathname === "/admin" && props.profiles && (
+            <CardDescription className="flex items-center gap-2">
+              <User2 className="size-4" />
+              <span>{props.profiles.nama}</span>
+            </CardDescription>
+          )}
+
           <CardDescription className="flex items-center gap-2">
             <Calendar className="size-4" />
             <span>{pipe(props.created_at, formatDate())}</span>
