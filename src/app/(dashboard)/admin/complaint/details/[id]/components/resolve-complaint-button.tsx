@@ -104,7 +104,9 @@ export function ResolveComplaintButton(props: {
             />
 
             <AlertDialogFooter>
-              <AlertDialogCancel>Batalkan</AlertDialogCancel>
+              <AlertDialogCancel disabled={isPending}>
+                Batalkan
+              </AlertDialogCancel>
               <Button disabled={form.formState.isSubmitting || isPending}>
                 Ya, tanggapi aduan
               </Button>

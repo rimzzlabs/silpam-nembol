@@ -107,7 +107,9 @@ export function RejectComplaintButton(props: {
             />
 
             <AlertDialogFooter>
-              <AlertDialogCancel>Batalkan</AlertDialogCancel>
+              <AlertDialogCancel disabled={mutation.isPending}>
+                Batalkan
+              </AlertDialogCancel>
               <Button
                 variant="destructive"
                 disabled={form.formState.isSubmitting || mutation.isPending}

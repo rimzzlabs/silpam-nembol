@@ -37,6 +37,7 @@ export function NewComplaintForm() {
         await mutation.mutateAsync(values);
         form.reset();
         router.push("/user/complaint");
+        router.refresh();
       },
       {
         success: "Aduan berhasil dibuat",
