@@ -1,38 +1,33 @@
 import { ButtonLink } from "@/components/ui/button";
-import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { ClipboardPlus } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { FilePlusIcon } from "lucide-react";
+import Image from "next/image";
 
 export default function Home() {
   return (
-    <section className="h-screen grid place-items-center">
-      <header className="w-11/12 max-w-md mx-auto text-center">
-        <h1 className="text-3xl font-bold xl:text-4xl">SILPAM Desa Nembol</h1>
-        <p>Sistem Informasi Layanan Pengaduan Desa Nembol</p>
+    <section className="pt-40">
+      <header className="w-11/12 max-w-2xl mx-auto text-center">
+        <Card>
+          <CardContent>
+            <Image
+              src="/preview.png"
+              alt="preview aduan"
+              width={1280}
+              height={720}
+            />
+          </CardContent>
+        </Card>
 
-        <div className="flex items-center gap-2 text-start pt-6 pb-6">
-          <Card className="w-full">
-            <CardHeader>
-              <CardTitle className="text-xl">76</CardTitle>
-              <CardDescription>Pengaduan Dibuat</CardDescription>
-            </CardHeader>
-          </Card>
-
-          <Card className="w-full">
-            <CardHeader>
-              <CardTitle className="text-xl">98</CardTitle>
-              <CardDescription>Pengaduan Terselesaikan</CardDescription>
-            </CardHeader>
-          </Card>
-        </div>
+        <h1 className="text-3xl font-bold xl:text-4xl py-3">
+          SILPAM Desa Nembol
+        </h1>
+        <p className="font-medium text-muted-foreground pb-6">
+          Sistem Informasi Layanan Pengaduan Desa Nembol
+        </p>
 
         <ButtonLink href="/new">
-          <ClipboardPlus className="size-4" />
-          Buat Pengaduan
+          <FilePlusIcon className="size-4" />
+          Buat Aduan
         </ButtonLink>
       </header>
     </section>
