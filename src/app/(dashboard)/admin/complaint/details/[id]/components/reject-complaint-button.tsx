@@ -21,26 +21,29 @@ import {
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { withSonnerPromise } from "@/lib/sonner";
-import { useResolveComplaint } from "@/modules/complaint/hooks";
+import { useRejectComplaint } from "@/modules/complaint/hooks";
 import {
   resolveComplaint,
   type ResolveComplaint,
 } from "@/modules/complaint/zod-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useIsMutating } from "@tanstack/react-query";
-import { Check } from "lucide-react";
+import { XIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 
-export function ResolveComplaintButton(props: {
+export function RejectComplaintButton(props: {
   complaintId: number;
   status: string;
 }) {
   let router = useRouter();
-  let resolveMutation = useResolveComplaint();
-  let isRejecting = useIsMutating({ mutationKey: ["reject-complaint"] });
+  let mutation = useRejectComplaint();
+  let [open, setOpen] = useState(false);
+  let isProcessing = useIsMutating({ mutationKey: ["process-complaint"] });
+  let isResolving = useIsMutating({ mutationKey: ["resolve-complaint"] });
 
-  let isPending = Boolean(resolveMutation.isPending || isRejecting);
+  let isPending = Boolean(mutation.isPending || isProcessing || isResolving);
 
   let form = useForm<ResolveComplaint>({
     defaultValues: { id: props.complaintId, remarks: "" },
@@ -50,8 +53,9 @@ export function ResolveComplaintButton(props: {
   let onSubmit = form.handleSubmit(
     withSonnerPromise(
       async (values) => {
-        await resolveMutation.mutateAsync(values);
+        await mutation.mutateAsync(values);
         form.reset();
+        setOpen(false);
         router.refresh();
       },
       {
@@ -62,24 +66,23 @@ export function ResolveComplaintButton(props: {
     ),
   );
 
-  if (props.status !== "diproses") return null;
+  if (props.status === "ditolak" || props.status === "selesai") return null;
 
   return (
-    <AlertDialog>
+    <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button disabled={isPending} size="sm">
-          <Check className="size-4" />
-          Tanggapi aduan
+        <Button variant="destructive" disabled={isPending} size="sm">
+          <XIcon className="size-4" />
+          Tolak aduan
         </Button>
       </AlertDialogTrigger>
 
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Tanggapi aduan warga</AlertDialogTitle>
+          <AlertDialogTitle>Tolak aduan warga</AlertDialogTitle>
           <AlertDialogDescription>
-            Apakah anda yakin ingin mengubah status aduan ini? Anda akan
-            menanggapi aduan warga dan menandai aduan ini sebagai{" "}
-            <strong>selesai</strong>
+            Apakah anda yakin ingin menolak aduan ini? Anda akan menanggapi
+            aduan warga dan menandai aduan ini sebagai <strong>ditolak</strong>
           </AlertDialogDescription>
         </AlertDialogHeader>
 
@@ -105,8 +108,11 @@ export function ResolveComplaintButton(props: {
 
             <AlertDialogFooter>
               <AlertDialogCancel>Batalkan</AlertDialogCancel>
-              <Button disabled={form.formState.isSubmitting || isPending}>
-                Ya, tanggapi aduan
+              <Button
+                variant="destructive"
+                disabled={form.formState.isSubmitting || mutation.isPending}
+              >
+                Ya, tolak aduan
               </Button>
             </AlertDialogFooter>
           </form>

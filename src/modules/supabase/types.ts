@@ -24,6 +24,7 @@ export type Database = {
           konten: string
           lokasi: string
           processed_at: string | null
+          rejected_at: string | null
           status: string
           user_id: string
         }
@@ -36,6 +37,7 @@ export type Database = {
           konten: string
           lokasi: string
           processed_at?: string | null
+          rejected_at?: string | null
           status?: string
           user_id: string
         }
@@ -48,6 +50,7 @@ export type Database = {
           konten?: string
           lokasi?: string
           processed_at?: string | null
+          rejected_at?: string | null
           status?: string
           user_id?: string
         }

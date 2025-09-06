@@ -9,6 +9,7 @@ import { ProcessComplaintButton } from "./components/process-complaint-button";
 import { ResolveComplaintButton } from "./components/resolve-complaint-button";
 import { ComplaintPhoto } from "@/components/complaint/complaint-photo";
 import { Fragment } from "react";
+import { RejectComplaintButton } from "./components/reject-complaint-button";
 
 export default async function DetailsPage(props: TPageProps) {
   let params = await props.params;
@@ -28,14 +29,21 @@ export default async function DetailsPage(props: TPageProps) {
         <div className="xl:col-span-3">
           <div className="flex items-center justify-between">
             <ComplaintBackButton pathname="/admin/complaint" />
-            <ProcessComplaintButton
-              complaintId={complaint.id}
-              status={complaint.status}
-            />
-            <ResolveComplaintButton
-              complaintId={complaint.id}
-              status={complaint.status}
-            />
+
+            <div className="inline-flex items-center gap-2">
+              <RejectComplaintButton
+                complaintId={complaint.id}
+                status={complaint.status}
+              />
+              <ProcessComplaintButton
+                complaintId={complaint.id}
+                status={complaint.status}
+              />
+              <ResolveComplaintButton
+                complaintId={complaint.id}
+                status={complaint.status}
+              />
+            </div>
           </div>
 
           <ComplaintPhoto foto={complaint.foto} judul={complaint.judul} />

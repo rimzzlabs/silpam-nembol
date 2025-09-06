@@ -1,16 +1,29 @@
 import { createClient } from "@/modules/supabase/client";
 import type { Tables } from "@/modules/supabase/types";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { toInt } from "radash";
 import { parseComplaintCounters } from "./utils";
 import type { CreateComplaint, ResolveComplaint } from "./zod-schema";
 import { useSession } from "../auth/hooks";
-import { processComplaint, resolveComplaint } from "./action";
+import {
+  processComplaintAction,
+  rejectComplaintAction,
+  resolveComplaintAction,
+} from "./action";
 
 type UseComplaintsOptions = Prettify<
   OptionalPagination & {
     userId?: string;
-    initialData?: PaginatedResult<Tables<"pengaduan">>;
+    initialData?: PaginatedResult<
+      Tables<"pengaduan"> & {
+        profiles?: Pick<Tables<"profiles">, "id" | "nama" | "alamat">;
+      }
+    >;
   }
 >;
 
@@ -21,6 +34,7 @@ type UseComplaintCounters = {
     created: number;
     processed: number;
     completed: number;
+    rejected: number;
   };
 };
 
@@ -49,29 +63,80 @@ export function useComplaints(options?: UseComplaintsOptions) {
       if (!userId) {
         let res = await supabase
           .from("pengaduan")
-          .select("*", { count: "exact" })
+          .select(
+            `*,
+          profiles (id, nama, alamat)`,
+            { count: "exact" },
+          )
           .range(from, to)
           .order("created_at", { ascending: false })
           .abortSignal(ctx.signal)
           .throwOnError();
 
-        return { limit, result: res.data, page, total: res.count };
+        return { limit, result: res.data, page, total: res.count ?? 0 };
       }
 
       let res = await supabase
         .from("pengaduan")
-        .select("*", { count: "exact" })
+        .select(
+          `*,
+          profiles (id, nama, alamat)`,
+          { count: "exact" },
+        )
         .eq("user_id", userId)
         .range(from, to)
         .order("created_at", { ascending: false })
         .abortSignal(ctx.signal)
         .throwOnError();
 
-      return { limit, result: res.data, page, total: res.count };
+      return { limit, result: res.data, page, total: res.count ?? 0 };
     },
   });
 }
 
+export function useInfiniteComplaints(
+  options?: Omit<UseComplaintsOptions, "page">,
+) {
+  const supabase = createClient();
+  const limit = toInt(options?.limit, 10);
+
+  return useInfiniteQuery({
+    queryKey: ["get-infinite-complaints", options?.userId, limit] as const,
+    queryFn: async ({ pageParam = 0, queryKey, signal }) => {
+      let [, userId] = queryKey;
+      let from = pageParam * limit;
+      let to = from + limit - 1;
+
+      let base = supabase
+        .from("pengaduan")
+        .select(
+          `*,
+           profiles (id, nama, alamat)`,
+          { count: "exact" },
+        )
+        .range(from, to)
+        .order("created_at", { ascending: false })
+        .abortSignal(signal);
+
+      let res = userId
+        ? await base.eq("user_id", userId).throwOnError()
+        : await base.throwOnError();
+
+      return {
+        result: res.data ?? [],
+        total: res.count ?? 0,
+        page: pageParam,
+        limit,
+      };
+    },
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => {
+      const { page, total, limit } = lastPage;
+      const loaded = (page + 1) * limit;
+      return loaded < total ? page + 1 : undefined;
+    },
+  });
+}
 export function useComplaintCounters(options?: UseComplaintCounters) {
   let supabase = createClient();
 
@@ -141,8 +206,9 @@ export function useProcessComplaint() {
   let qc = useQueryClient();
 
   return useMutation({
+    mutationKey: ["process-complaint"],
     mutationFn: async (complaintId: number) => {
-      return await processComplaint(complaintId);
+      return await processComplaintAction(complaintId);
     },
     onSettled: () => {
       qc.invalidateQueries({ queryKey: ["get-complaints"] });
@@ -154,10 +220,27 @@ export function useResolveComplaint() {
   let qc = useQueryClient();
 
   return useMutation({
+    mutationKey: ["resolvle-complaint"],
     mutationFn: async (payload: ResolveComplaint) => {
-      return await resolveComplaint(payload);
+      return await resolveComplaintAction(payload);
     },
     onSettled: () => {
+      qc.invalidateQueries({ queryKey: ["get-replies"] });
+      qc.invalidateQueries({ queryKey: ["get-complaints"] });
+    },
+  });
+}
+
+export function useRejectComplaint() {
+  let qc = useQueryClient();
+
+  return useMutation({
+    mutationKey: ["reject-complaint"],
+    mutationFn: async (payload: ResolveComplaint) => {
+      return await rejectComplaintAction(payload);
+    },
+    onSettled: () => {
+      qc.invalidateQueries({ queryKey: ["get-replies"] });
       qc.invalidateQueries({ queryKey: ["get-complaints"] });
     },
   });

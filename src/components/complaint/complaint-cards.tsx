@@ -16,6 +16,7 @@ type UserCardProps = {
   completed: number;
   processed: number;
   created: number;
+  rejected: number;
 };
 
 export function ComplaintCards(props: UserCardProps) {
@@ -29,7 +30,7 @@ export function ComplaintCards(props: UserCardProps) {
     .otherwise(F.identity);
 
   return (
-    <div className="grid lg:grid-cols-3 gap-4">
+    <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,12rem),1fr)))] gap-4">
       <Card>
         <CardHeader>
           <CardTitle>{data.created}</CardTitle>
@@ -48,6 +49,13 @@ export function ComplaintCards(props: UserCardProps) {
         <CardHeader>
           <CardTitle>{data.completed}</CardTitle>
           <CardDescription>Pengaduan selesai</CardDescription>
+        </CardHeader>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>{data.rejected}</CardTitle>
+          <CardDescription>Pengaduan ditolak</CardDescription>
         </CardHeader>
       </Card>
     </div>

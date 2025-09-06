@@ -15,6 +15,7 @@ import type { Tables } from "@/modules/supabase/types";
 import { useComplaints } from "@/modules/complaint/hooks";
 import { parseComplaints } from "@/modules/complaint/utils";
 import { DashboardComplaintListItem } from "./dashboard-complaint-list-item";
+import { ScrollArea } from "../ui/scroll-area";
 
 type DashboardComplaintListProps = {
   userId?: string;
@@ -23,11 +24,9 @@ type DashboardComplaintListProps = {
   emptyMessage: string;
   prefixComplaintPathname: "/user" | "/admin";
   initialData: PaginatedResult<
-    Prettify<
-      Tables<"pengaduan"> & {
-        reporter?: Pick<Tables<"profiles">, "id" | "nama" | "alamat">;
-      }
-    >
+    Tables<"pengaduan"> & {
+      profiles?: Pick<Tables<"profiles">, "id" | "nama" | "alamat">;
+    }
   >;
 };
 
@@ -56,20 +55,22 @@ export function DashboardComplaintList(props: DashboardComplaintListProps) {
       </CardHeader>
 
       <CardContent>
-        <div>
-          {complaints.length < 1 && (
-            <div className="h-96 grid place-items-center">
-              <p className="text-sm font-semibold text-center">
-                {props.emptyMessage}
-              </p>
-            </div>
-          )}
+        <ScrollArea className="h-[26rem]">
+          <div>
+            {complaints.length < 1 && (
+              <div className="h-96 grid place-items-center">
+                <p className="text-sm font-semibold text-center">
+                  {props.emptyMessage}
+                </p>
+              </div>
+            )}
 
-          {complaints.length > 0 &&
-            complaints.map((complaint) => (
-              <DashboardComplaintListItem {...complaint} key={complaint.id} />
-            ))}
-        </div>
+            {complaints.length > 0 &&
+              complaints.map((complaint) => (
+                <DashboardComplaintListItem {...complaint} key={complaint.id} />
+              ))}
+          </div>
+        </ScrollArea>
       </CardContent>
     </Card>
   );

@@ -9,6 +9,7 @@ import {
   parseComplaintCounters,
   parseComplaints,
 } from "@/modules/complaint/utils";
+import { getServerComplaints } from "@/modules/complaint/query";
 
 export default async function User(props: TPageProps) {
   let supabase = await createClient();
@@ -20,14 +21,11 @@ export default async function User(props: TPageProps) {
   let page = toInt(params.page, 1);
   let limit = toInt(params.limit, 10);
 
-  let from = (page - 1) * limit;
-  let to = from + limit - 1;
-
-  let _complaintsQuery = supabase
-    .from("pengaduan")
-    .select("*", { count: "exact" })
-    .eq("user_id", userQuery.data.user.id)
-    .range(from, to);
+  let _complaintsQuery = getServerComplaints({
+    page,
+    limit,
+    userId: userQuery.data.user.id,
+  });
 
   let _complaintCountsQuery = supabase
     .from("pengaduan")

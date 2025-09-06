@@ -15,6 +15,7 @@ export function DashboardComplaintListItem(
   let variant = match<string, BadgeVariants>(props.status)
     .with("diproses", () => "warning")
     .with("selesai", () => "success")
+    .with("ditolak", () => "destructive")
     .otherwise(() => "default");
 
   return (

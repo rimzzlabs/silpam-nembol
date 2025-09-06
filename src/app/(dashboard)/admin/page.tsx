@@ -1,5 +1,6 @@
 import { ComplaintCards } from "@/components/complaint/complaint-cards";
 import { DashboardComplaintList } from "@/components/complaint/dashboard-complaint-list";
+import { getServerComplaints } from "@/modules/complaint/query";
 import {
   parseComplaintCounters,
   parseComplaints,
@@ -17,24 +18,9 @@ export default async function Admin(props: TPageProps) {
   if (userQuery.error) redirect("/auth/signin");
 
   let page = toInt(params.page, 1);
-  let limit = toInt(params.limit, 10);
+  let limit = toInt(params.limit, 9);
 
-  let from = (page - 1) * limit;
-  let to = from + limit - 1;
-
-  // join with user
-  let _complaintsQuery = supabase
-    .from("pengaduan")
-    .select(
-      `*,
-      profiles (
-        id,
-        nama,
-        alamat
-      )`,
-      { count: "exact" },
-    )
-    .range(from, to);
+  let _complaintsQuery = getServerComplaints({ page, limit });
 
   let _complaintCountsQuery = supabase
     .from("pengaduan")

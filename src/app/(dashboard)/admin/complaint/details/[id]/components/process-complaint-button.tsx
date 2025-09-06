@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { withSonnerPromise } from "@/lib/sonner";
 import { useProcessComplaint } from "@/modules/complaint/hooks";
+import { useIsMutating } from "@tanstack/react-query";
 import { Repeat } from "lucide-react";
 
 export function ProcessComplaintButton(props: {
@@ -21,6 +22,9 @@ export function ProcessComplaintButton(props: {
   status: string;
 }) {
   let processComplaint = useProcessComplaint();
+  let isRejecting = useIsMutating({ mutationKey: ["reject-complaint"] });
+
+  let isPending = Boolean(processComplaint.isPending || isRejecting);
 
   let onClickProcess = withSonnerPromise(
     async () => {
@@ -38,7 +42,7 @@ export function ProcessComplaintButton(props: {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button disabled={processComplaint.isPending} size="sm">
+        <Button disabled={isPending} size="sm">
           <Repeat className="size-4" />
           Proses aduan
         </Button>

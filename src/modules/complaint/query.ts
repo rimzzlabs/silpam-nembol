@@ -13,6 +13,7 @@ type UpdateComplaintPayload = Prettify<
       | "status"
       | "processed_at"
       | "completed_at"
+      | "rejected_at"
     >
   > & { id: number }
 >;
@@ -29,14 +30,30 @@ export async function getServerComplaints(options: QueryOptions) {
   if (!options.userId) {
     return await supabase
       .from("pengaduan")
-      .select("*", { count: "exact" })
+      .select(
+        `*,
+      profiles (
+        id,
+        nama,
+        alamat
+      )`,
+        { count: "exact" },
+      )
       .order("created_at", { ascending: false })
       .range(from, to);
   }
 
   return await supabase
     .from("pengaduan")
-    .select("*", { count: "exact" })
+    .select(
+      `*,
+      profiles (
+        id,
+        nama,
+        alamat
+      )`,
+      { count: "exact" },
+    )
     .eq("user_id", options?.userId)
     .order("created_at", { ascending: false })
     .range(from, to);
@@ -78,6 +95,7 @@ export async function updateComplaint(payload: UpdateComplaintPayload) {
       status: payload.status,
       completed_at: payload.completed_at,
       processed_at: payload.processed_at,
+      rejected_at: payload.rejected_at,
     })
     .eq("id", payload.id);
 }

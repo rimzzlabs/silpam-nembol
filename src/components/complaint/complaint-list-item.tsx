@@ -13,27 +13,40 @@ import {
 } from "../ui/card";
 import { Button } from "../ui/button";
 import Link from "next/link";
+import { Badge, type BadgeVariants } from "../ui/badge";
+import { match } from "ts-pattern";
+import { title } from "radash";
 
 type ComplaintListItemProps = Tables<"pengaduan"> & {
   prefixDetailPathname: `/user` | `/admin`;
 };
 
 export function ComplaintListItem(props: ComplaintListItemProps) {
+  let variant = match<string, BadgeVariants>(props.status)
+    .with("diproses", () => "warning")
+    .with("selesai", () => "success")
+    .with("ditolak", () => "destructive")
+    .otherwise(() => "default");
+
   let detailUrl = `${props.prefixDetailPathname}/complaint/details/${props.id}`;
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="pb-2">{props.judul}</CardTitle>
-        <CardDescription className="inline-flex gap-2">
-          <Calendar className="size-4" />
-          {pipe(props.created_at, formatDate())}
-        </CardDescription>
+        <CardTitle className="pb-2 text-balance">{props.judul}</CardTitle>
+        <Badge variant={variant}>{title(props.status)}</Badge>
 
-        <CardDescription className="inline-flex gap-2">
-          <MapPin className="size-4" />
-          {props.lokasi}
-        </CardDescription>
+        <div className="flex flex-col gap-1 w-full pt-2">
+          <CardDescription className="flex items-center gap-2">
+            <Calendar className="size-4" />
+            <span>{pipe(props.created_at, formatDate())}</span>
+          </CardDescription>
+
+          <CardDescription className="flex items-center gap-2">
+            <MapPin className="size-4" />
+            <span>{trimParagraph(props.lokasi, 60)}</span>
+          </CardDescription>
+        </div>
 
         <CardAction>
           <Button asChild size="sm" variant="ghost">

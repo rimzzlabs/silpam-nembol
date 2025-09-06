@@ -12,7 +12,7 @@ export default async function Complaint(props: TPageProps) {
   if (!session) redirect("/auth/signin");
 
   let page = toInt(params.page, 1);
-  let limit = toInt(params.limit, 10);
+  let limit = toInt(params.limit, 9);
 
   let res = await getServerComplaints({ page, limit });
   let result = parseComplaints(res.data);
