@@ -30,7 +30,7 @@ export default function Home() {
           </Card>
         </div>
 
-        <ButtonLink href="/report">
+        <ButtonLink href="/new">
           <ClipboardPlus className="size-4" />
           Buat Pengaduan
         </ButtonLink>

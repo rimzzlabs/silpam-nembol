@@ -67,15 +67,13 @@ export type Database = {
           created_at: string
           id: string
           nama: string
-          role: string
           updated_at: string
         }
         Insert: {
           alamat: string
           created_at?: string
-          id: string
+          id?: string
           nama: string
-          role: string
           updated_at?: string
         }
         Update: {
@@ -83,7 +81,6 @@ export type Database = {
           created_at?: string
           id?: string
           nama?: string
-          role?: string
           updated_at?: string
         }
         Relationships: []
@@ -129,6 +126,21 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_roles: {
+        Row: {
+          role: string
+          user_id: string
+        }
+        Insert: {
+          role: string
+          user_id: string
+        }
+        Update: {
+          role?: string
+          user_id?: string
+        }
+        Relationships: []
       }
     }
     Views: {

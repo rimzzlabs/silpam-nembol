@@ -1,19 +1,21 @@
 import { createClient } from "@/modules/supabase/server";
 import { redirect } from "next/navigation";
-import { UserCards } from "./components/user-cards";
-import { UserComplaintList } from "./components/user-complaint-list";
 
-import { A, F, O, pipe } from "@mobily/ts-belt";
+import { F, O, pipe } from "@mobily/ts-belt";
 import { toInt } from "radash";
+import { ComplaintCards } from "@/components/complaint/complaint-cards";
+import { DashboardComplaintList } from "@/components/complaint/dashboard-complaint-list";
+import {
+  parseComplaintCounters,
+  parseComplaints,
+} from "@/modules/complaint/utils";
 
 export default async function User(props: TPageProps) {
   let supabase = await createClient();
   let userQuery = await supabase.auth.getUser();
   let params = await props.searchParams;
 
-  if (userQuery.error) {
-    redirect("/auth/signin");
-  }
+  if (userQuery.error) redirect("/auth/signin");
 
   let page = toInt(params.page, 1);
   let limit = toInt(params.limit, 10);
@@ -37,12 +39,7 @@ export default async function User(props: TPageProps) {
     _complaintCountsQuery,
   ]);
 
-  let complaints = pipe(
-    complaintsQuery.data,
-    O.fromNullable,
-    O.mapWithDefault([], F.identity),
-    F.toMutable,
-  );
+  let complaints = parseComplaints(complaintsQuery.data);
 
   let counts = pipe(
     complaintCountsQuery.data,
@@ -51,33 +48,22 @@ export default async function User(props: TPageProps) {
     F.toMutable,
   );
 
-  let created = pipe(
-    counts,
-    A.filter((d) => d.status === "diajukan"),
-    A.length,
-  );
-  let processed = pipe(
-    counts,
-    A.filter((d) => d.status === "diproses"),
-    A.length,
-  );
-  let completed = pipe(
-    counts,
-    A.filter((d) => d.status === "selesai"),
-    A.length,
-  );
+  let counters = parseComplaintCounters(counts);
 
   return (
     <section className="grid gap-5">
       <h1 className="text-2xl font-bold">Dashboard </h1>
-      <UserCards
-        completed={completed}
-        processed={processed}
-        created={created}
-        total={complaintsQuery?.count ?? 0}
+      <ComplaintCards
+        {...counters}
+        userId={userQuery.data.user.id}
+        total={complaintsQuery.count ?? 0}
       />
 
-      <UserComplaintList
+      <DashboardComplaintList
+        title="Aduan saya"
+        emptyMessage="Anda belum membuat pengaduan"
+        description="Berikut adalah 10 aduan terbaru yang Anda buat"
+        prefixComplaintPathname="/user"
         initialData={{
           limit,
           page,

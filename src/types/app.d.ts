@@ -26,7 +26,7 @@ declare global {
 
   type QueryOptions = Prettify<
     {
-      userId: string;
+      userId?: string;
     } & OptionalPagination
   >;
 }

@@ -6,7 +6,7 @@ import { createClient } from "./server";
 let supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 let supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 
-let cache = new TimeBasedCache<string, Tables<"profiles">>(
+let cache = new TimeBasedCache<string, Tables<"profiles"> & { role: string }>(
   1000 * 60 * 10 /* 10 minutes */,
 );
 
@@ -45,23 +45,30 @@ export async function updateSession(request: NextRequest) {
   }
 
   let sessionId = claims?.session_id ?? "";
-  let user: null | Tables<"profiles"> = cache.get(sessionId);
+  let user = cache.get(sessionId);
 
   if (!user) {
     let userQuery = await supabase.auth.getUser();
 
     if (userQuery.error) return supabaseResponse;
 
-    let profile = await supabase
+    let _roleQuery = supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", userQuery.data.user.id)
+      .maybeSingle();
+    let _profile = supabase
       .from("profiles")
       .select("*")
       .eq("id", userQuery.data.user.id)
-      .single();
+      .maybeSingle();
 
-    if (profile.error) return supabaseResponse;
+    let [roleQuery, profileQuery] = await Promise.all([_roleQuery, _profile]);
 
-    cache.set(sessionId, profile.data);
-    user = profile.data;
+    if (!roleQuery.data?.role || !profileQuery.data) return supabaseResponse;
+
+    cache.set(sessionId, { ...profileQuery.data, role: roleQuery.data.role });
+    user = { ...profileQuery.data, role: roleQuery.data.role };
     return supabaseResponse;
   }
 

@@ -9,20 +9,18 @@ import {
 import { match, P } from "ts-pattern";
 import { F } from "@mobily/ts-belt";
 import { useComplaintCounters } from "@/modules/complaint/hooks";
-import { useSession } from "@/modules/auth/hooks";
 
 type UserCardProps = {
   total: number;
+  userId?: string;
   completed: number;
   processed: number;
   created: number;
 };
 
-export function UserCards(props: UserCardProps) {
-  let session = useSession();
-  let userId = session.data?.id;
+export function ComplaintCards(props: UserCardProps) {
   let complaintCountsQuery = useComplaintCounters({
-    userId,
+    userId: props.userId,
     initialData: props,
   });
 

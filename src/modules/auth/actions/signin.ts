@@ -14,15 +14,16 @@ export async function signinAction(payload: SignInSchema) {
 
   let userId = signIn.data.user.id;
 
-  let profile = await supabase
-    .from("profiles")
+  let roleQuery = await supabase
+    .from("user_roles")
     .select("role")
-    .eq("id", userId)
-    .single();
+    .eq("user_id", userId)
+    .maybeSingle();
 
-  if (profile.error) return failedAction(profile.error.message);
+  if (roleQuery.error) return failedAction(roleQuery.error.message);
+  if (!roleQuery.data) return failedAction("Role not found");
 
-  let role = profile.data.role;
+  let role = roleQuery.data.role;
 
   if (role === "admin") {
     revalidatePath("/admin");

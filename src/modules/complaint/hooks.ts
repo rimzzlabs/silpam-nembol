@@ -3,8 +3,9 @@ import type { Tables } from "@/modules/supabase/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toInt } from "radash";
 import { parseComplaintCounters } from "./utils";
-import type { CreateComplaint } from "./zod-schema";
+import type { CreateComplaint, ResolveComplaint } from "./zod-schema";
 import { useSession } from "../auth/hooks";
+import { processComplaint, resolveComplaint } from "./action";
 
 type UseComplaintsOptions = Prettify<
   OptionalPagination & {
@@ -34,7 +35,6 @@ export function useComplaints(options?: UseComplaintsOptions) {
 
   return useQuery({
     initialData: options?.initialData,
-    enabled: Boolean(options?.userId),
     queryKey: [
       "get-complaints",
       options?.userId,
@@ -45,13 +45,25 @@ export function useComplaints(options?: UseComplaintsOptions) {
     ] as const,
     queryFn: async (ctx) => {
       let [, userId, from, to, limit, page] = ctx.queryKey;
-      if (!userId) throw new Error("Missing user id");
+
+      if (!userId) {
+        let res = await supabase
+          .from("pengaduan")
+          .select("*", { count: "exact" })
+          .range(from, to)
+          .order("created_at", { ascending: false })
+          .abortSignal(ctx.signal)
+          .throwOnError();
+
+        return { limit, result: res.data, page, total: res.count };
+      }
 
       let res = await supabase
         .from("pengaduan")
         .select("*", { count: "exact" })
         .eq("user_id", userId)
         .range(from, to)
+        .order("created_at", { ascending: false })
         .abortSignal(ctx.signal)
         .throwOnError();
 
@@ -65,7 +77,6 @@ export function useComplaintCounters(options?: UseComplaintCounters) {
 
   return useQuery({
     initialData: options?.initialData,
-    enabled: Boolean(options?.userId),
     queryKey: ["get-complaint-counters", options?.userId] as const,
     queryFn: async (ctx) => {
       let [, userId] = ctx.queryKey;
@@ -103,7 +114,7 @@ export function useCreateComplaint() {
   let qc = useQueryClient();
   let supabase = createClient();
   let session = useSession();
-  let userId = session.data?.id;
+  let userId = session.data?.user.id;
 
   return useMutation({
     mutationFn: async (payload: CreateComplaint) => {
@@ -119,6 +130,32 @@ export function useCreateComplaint() {
           foto: payload?.imageUrl,
         })
         .throwOnError();
+    },
+    onSettled: () => {
+      qc.invalidateQueries({ queryKey: ["get-complaints"] });
+    },
+  });
+}
+
+export function useProcessComplaint() {
+  let qc = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (complaintId: number) => {
+      return await processComplaint(complaintId);
+    },
+    onSettled: () => {
+      qc.invalidateQueries({ queryKey: ["get-complaints"] });
+    },
+  });
+}
+
+export function useResolveComplaint() {
+  let qc = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (payload: ResolveComplaint) => {
+      return await resolveComplaint(payload);
     },
     onSettled: () => {
       qc.invalidateQueries({ queryKey: ["get-complaints"] });

@@ -12,8 +12,9 @@ import { trimParagraph } from "@/lib/string";
 import type { Tables } from "@/modules/supabase/types";
 import { pipe } from "@mobily/ts-belt";
 import { Calendar, EyeIcon, MapPin } from "lucide-react";
+import Link from "next/link";
 
-export function UserComplaintListItem(props: Tables<"pengaduan">) {
+export function AdminComplaintListItem(props: Tables<"pengaduan">) {
   return (
     <Card>
       <CardHeader>
@@ -29,9 +30,11 @@ export function UserComplaintListItem(props: Tables<"pengaduan">) {
         </CardDescription>
 
         <CardAction>
-          <Button size="sm" variant="ghost">
-            <EyeIcon className="size-4" />
-            Lihat
+          <Button asChild size="sm" variant="ghost">
+            <Link href={`/admin/complaint/details/${props.id}`}>
+              <EyeIcon className="size-4" />
+              Lihat
+            </Link>
           </Button>
         </CardAction>
       </CardHeader>

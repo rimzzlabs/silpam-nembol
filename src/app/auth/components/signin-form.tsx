@@ -14,11 +14,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { withSonnerPromise } from "@/lib/sonner";
 import { Input, InputPassword } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { signinAction } from "../actions/signin";
+import { signinAction } from "../../../modules/auth/actions/signin";
 import { useRouter } from "next/navigation";
+import { useTransition } from "react";
 
 export function SignInForm() {
   let router = useRouter();
+  let [isPending, startTransition] = useTransition();
 
   let form = useForm<SignInSchema>({
     defaultValues: { email: "", password: "" },
@@ -33,11 +35,15 @@ export function SignInForm() {
 
         let isAdmin = res.result.role === "admin";
         if (isAdmin) {
-          router.replace("/admin");
+          startTransition(() => {
+            router.replace("/admin");
+          });
           return;
         }
 
-        router.replace("/user");
+        startTransition(() => {
+          router.replace("/user");
+        });
       },
       {
         loading: "Memuat...",
@@ -78,7 +84,9 @@ export function SignInForm() {
           )}
         />
 
-        <Button disabled={form.formState.isSubmitting}>Login</Button>
+        <Button disabled={form.formState.isSubmitting || isPending}>
+          Login
+        </Button>
       </form>
     </Form>
   );

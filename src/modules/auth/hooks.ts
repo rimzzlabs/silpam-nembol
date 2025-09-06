@@ -7,11 +7,23 @@ export function useSession() {
   return useQuery({
     queryKey: ["get-user"],
     queryFn: async () => {
-      let res = await supabase.auth.getSession();
+      let sessionQuery = await supabase.auth.getSession();
 
-      if (res.error) throw new Error(res.error.message);
+      if (sessionQuery.error || !sessionQuery.data.session) {
+        throw new Error("Unauthorized");
+      }
 
-      return res.data.session?.user;
+      let roleQuery = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", sessionQuery.data.session.user.id)
+        .maybeSingle();
+
+      if (roleQuery.error || !roleQuery.data?.role) {
+        throw new Error("Unauthorized");
+      }
+
+      return { ...sessionQuery.data.session, userRole: roleQuery.data.role };
     },
   });
 }

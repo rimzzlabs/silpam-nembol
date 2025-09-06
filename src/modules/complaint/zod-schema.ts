@@ -16,3 +16,12 @@ export const createComplaint = z.object({
     .min(1, "Harap masukan lokasi aduan")
     .max(100, "Maksimal 100 karakter"),
 });
+
+export type ResolveComplaint = z.infer<typeof resolveComplaint>;
+export const resolveComplaint = z.object({
+  id: z.number({ error: "Harap masukan id aduan" }),
+  remarks: z
+    .string()
+    .min(1, "Harap masukan tanggapan aduan")
+    .max(500, "Maksimal 500 karakter"),
+});

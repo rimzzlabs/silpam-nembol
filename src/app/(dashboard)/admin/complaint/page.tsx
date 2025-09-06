@@ -1,6 +1,3 @@
-import { Button } from "@/components/ui/button";
-import { PlusIcon } from "lucide-react";
-import Link from "next/link";
 import { toInt } from "radash";
 import { getServerComplaints } from "@/modules/complaint/query";
 import { getServerSession } from "@/modules/auth/query";
@@ -17,25 +14,16 @@ export default async function Complaint(props: TPageProps) {
   let page = toInt(params.page, 1);
   let limit = toInt(params.limit, 10);
 
-  let res = await getServerComplaints({ page, limit, userId: session.user.id });
+  let res = await getServerComplaints({ page, limit });
   let result = parseComplaints(res.data);
   let total = res.count ?? 0;
 
   return (
     <section className="grid gap-5">
-      <div className="flex items-center justify-between gap-4">
-        <h1 className="text-2xl font-bold">Daftar aduan saya</h1>
-
-        <Button asChild>
-          <Link href="/user/complaint/new">
-            <PlusIcon className="size-4" />
-            Buat aduan
-          </Link>
-        </Button>
-      </div>
+      <h1 className="text-2xl font-bold">Daftar aduan warga</h1>
 
       <ComplaintList
-        prefixDetailPathname="/user"
+        prefixDetailPathname="/admin"
         initialData={{ limit, page, result, total }}
       />
     </section>

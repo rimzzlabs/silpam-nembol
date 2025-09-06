@@ -1,28 +1,25 @@
 "use client";
 
-import { useSession } from "@/modules/auth/hooks";
 import { useComplaints } from "@/modules/complaint/hooks";
 import { parseComplaints } from "@/modules/complaint/utils";
 import type { Tables } from "@/modules/supabase/types";
-import { UserComplaintListItem } from "./user-complaint-list-item";
+import { ComplaintListItem } from "./complaint-list-item";
 
-export function UserComplaintList(props: {
+type ComplaintListProps = {
   initialData: PaginatedResult<Tables<"pengaduan">>;
-}) {
-  let session = useSession();
-  let userId = session.data?.id;
-  let complaintsQuery = useComplaints({
-    userId,
-    initialData: props.initialData,
-  });
+  prefixDetailPathname: "/user" | "/admin";
+};
+
+export function ComplaintList(props: ComplaintListProps) {
+  let complaintsQuery = useComplaints({ initialData: props.initialData });
 
   let complaints = parseComplaints(complaintsQuery.data?.result);
 
   if (complaints.length < 1) {
     return (
-      <div className="h-[calc(100vh-12rem)] grid place-items-center text-center">
+      <div className="h-[calc(100vh-8rem)] grid place-items-center text-center">
         <p className="text-sm font-medium text-muted-foreground">
-          Anda belum membuat pengaduan
+          Belum ada warga yang membuat pengaduan
         </p>
       </div>
     );
@@ -31,7 +28,11 @@ export function UserComplaintList(props: {
   return (
     <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,20rem),1fr)))] gap-3">
       {complaints.map((complaint) => (
-        <UserComplaintListItem key={complaint.id} {...complaint} />
+        <ComplaintListItem
+          {...complaint}
+          key={complaint.id}
+          prefixDetailPathname={props.prefixDetailPathname}
+        />
       ))}
     </div>
   );

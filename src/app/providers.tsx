@@ -28,6 +28,7 @@ export function Providers(props: PropsWithChildren) {
           shallowRouting
           options={{ showSpinner: false }}
         />
+
         <Toaster />
       </ThemeProvider>
     </QueryClientProvider>

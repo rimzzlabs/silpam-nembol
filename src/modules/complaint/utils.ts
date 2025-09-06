@@ -24,7 +24,11 @@ export function parseComplaintCounters(
 }
 
 export function parseComplaints(
-  complaints?: Array<Tables<"pengaduan">> | null,
+  complaints?: Array<
+    Tables<"pengaduan"> & {
+      profiles?: Pick<Tables<"profiles">, "id" | "nama" | "alamat">;
+    }
+  > | null,
 ) {
   return pipe(complaints, O.fromNullable, O.mapWithDefault([], F.identity));
 }

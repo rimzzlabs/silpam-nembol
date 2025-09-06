@@ -3,15 +3,15 @@
 import { SidebarMenu, SidebarMenuSkeleton } from "@/components/ui/sidebar";
 import { getDashboardNavigations } from "./dashboard-navigations";
 import { DashboardSidebarMenuItem } from "./dashboard-sidebar-menu-item";
-import { useProfile } from "@/modules/profile/query";
 import { Fragment } from "react";
+import { useSession } from "@/modules/auth/hooks";
 
 export function DashboardSidebarMenu() {
-  let profileQuery = useProfile();
+  let sessionQuery = useSession();
 
-  let navigations = getDashboardNavigations(profileQuery.data?.data?.role);
+  let navigations = getDashboardNavigations(sessionQuery.data?.userRole);
 
-  if (profileQuery.isPending || profileQuery.isError) {
+  if (sessionQuery.isPending || sessionQuery.isError) {
     return (
       <Fragment>
         <SidebarMenuSkeleton />
