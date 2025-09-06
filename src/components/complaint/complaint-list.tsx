@@ -17,6 +17,7 @@ type ComplaintListProps = {
     }
   >;
   prefixDetailPathname: "/user" | "/admin";
+  emptyMessage: string;
 };
 
 export function ComplaintList(props: ComplaintListProps) {
@@ -48,9 +49,9 @@ export function ComplaintList(props: ComplaintListProps) {
 
   if (complaints.length < 1) {
     return (
-      <div className="h-[calc(100vh-8rem)] grid place-items-center text-center">
-        <p className="text-sm font-medium text-muted-foreground">
-          Belum ada warga yang membuat pengaduan
+      <div className="h-[calc(100vh-12rem)] grid place-items-center text-center">
+        <p className="text-sm font-medium text-muted-foreground max-w-sm">
+          {props.emptyMessage}
         </p>
       </div>
     );

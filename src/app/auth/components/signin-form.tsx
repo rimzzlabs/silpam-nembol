@@ -14,13 +14,19 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { withSonnerPromise } from "@/lib/sonner";
 import { Input, InputPassword } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { signinAction } from "../../../modules/auth/actions/signin";
-import { useRouter } from "next/navigation";
+import { signinAction } from "@/modules/auth/actions/signin";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useTransition } from "react";
+import { O, pipe } from "@mobily/ts-belt";
 
 export function SignInForm() {
   let router = useRouter();
   let [isPending, startTransition] = useTransition();
+  let params = useSearchParams();
+  let redirectPathname = pipe(
+    params.get("from"),
+    O.mapWithDefault(null, decodeURIComponent),
+  );
 
   let form = useForm<SignInSchema>({
     defaultValues: { email: "", password: "" },
@@ -36,13 +42,13 @@ export function SignInForm() {
         let isAdmin = res.result.role === "admin";
         if (isAdmin) {
           startTransition(() => {
-            router.replace("/admin");
+            router.replace(redirectPathname || "/admin");
           });
           return;
         }
 
         startTransition(() => {
-          router.replace("/user");
+          router.replace(redirectPathname || "/user");
         });
       },
       {

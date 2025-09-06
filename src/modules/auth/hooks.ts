@@ -23,7 +23,10 @@ export function useSession() {
         throw new Error("Unauthorized");
       }
 
-      return { ...sessionQuery.data.session, userRole: roleQuery.data.role };
+      return {
+        ...sessionQuery.data.session.user,
+        userRole: roleQuery.data.role,
+      };
     },
   });
 }

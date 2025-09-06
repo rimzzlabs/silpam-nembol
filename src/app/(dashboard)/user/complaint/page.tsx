@@ -36,6 +36,7 @@ export default async function Complaint(props: TPageProps) {
 
       <ComplaintList
         prefixDetailPathname="/user"
+        emptyMessage="Anda belum mebuat aduan, silahkan buat aduan dan daftar aduan anda akan muncul disini"
         initialData={{ limit, page, result, total }}
       />
     </section>

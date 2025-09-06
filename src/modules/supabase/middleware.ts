@@ -39,7 +39,11 @@ export async function updateSession(request: NextRequest) {
   if (!claims && !isAuthPage) {
     // no user, potentially respond by redirecting the user to the login page
     let url = request.nextUrl.clone();
+    let from = encodeURIComponent(request.nextUrl.pathname);
     url.pathname = "/auth/signin";
+    if (from) {
+      url.searchParams.set("from", from);
+    }
     cache.clear();
     return NextResponse.redirect(url);
   }

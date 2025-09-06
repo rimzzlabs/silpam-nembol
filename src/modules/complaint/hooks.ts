@@ -179,7 +179,7 @@ export function useCreateComplaint() {
   let qc = useQueryClient();
   let supabase = createClient();
   let session = useSession();
-  let userId = session.data?.user.id;
+  let userId = session.data?.id;
 
   return useMutation({
     mutationFn: async (payload: CreateComplaint) => {
