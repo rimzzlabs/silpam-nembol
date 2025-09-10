@@ -13,6 +13,7 @@ import { useSession } from "../auth/hooks";
 import {
   processComplaintAction,
   rejectComplaintAction,
+  removeComplaintAction,
   resolveComplaintAction,
 } from "./action";
 
@@ -101,6 +102,12 @@ export function useInfiniteComplaints(
   const limit = toInt(options?.limit, 10);
 
   return useInfiniteQuery({
+    initialData: options?.initialData
+      ? {
+          pages: [options?.initialData],
+          pageParams: [],
+        }
+      : undefined,
     queryKey: ["get-infinite-complaints", options?.userId, limit] as const,
     queryFn: async ({ pageParam = 0, queryKey, signal }) => {
       let [, userId] = queryKey;
@@ -137,6 +144,7 @@ export function useInfiniteComplaints(
     },
   });
 }
+
 export function useComplaintCounters(options?: UseComplaintCounters) {
   let supabase = createClient();
 
@@ -242,6 +250,20 @@ export function useRejectComplaint() {
     onSettled: () => {
       qc.invalidateQueries({ queryKey: ["get-replies"] });
       qc.invalidateQueries({ queryKey: ["get-complaints"] });
+    },
+  });
+}
+
+export function useRemoveComplaint() {
+  let qc = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (complaintId: number) => {
+      return await removeComplaintAction(complaintId);
+    },
+    onSettled: () => {
+      qc.invalidateQueries({ queryKey: ["get-complaints"] });
+      qc.invalidateQueries({ queryKey: ["get-infinite-complaints"] });
     },
   });
 }
